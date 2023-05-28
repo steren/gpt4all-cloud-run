@@ -20,11 +20,12 @@ RUN apt-get -y upgrade
 RUN apt-get -y install wget
 RUN wget -q https://gpt4all.io/models/$MODEL -O ./models/$MODEL
 
-# Copy local code to the container image.
-COPY . ./
-
 # Install production dependencies.
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy code to the container image.
+COPY . ./
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
