@@ -29,11 +29,5 @@ curl http://localhost:8080/chat/completions \
 ## Deploy to Cloud Run
 
 ```
-gcloud run deploy gpt4all --source . \ 
-   --cpu 8 \
-   --memory 8 \ 
-   --timeout 900 \
-   --execution-environment gen2 \
-   --allow-unauthenticated \
-   --region us-central1
+gcloud run deploy gpt4all-test --source .  --cpu 8 --memory 8 --timeout 900 --execution-environment gen2 --allow-unauthenticated --region us-central1
 ```
