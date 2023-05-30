@@ -13,15 +13,28 @@ gpt = GPT4All(model_name, model_path="./models/", allow_download=False)
 print("Model loaded")
 
 
-@app.route("/")
+@app.route("/chat/completions", methods=['POST'])
 def chat():
     """Chat route"""
 
-    prompt = request.args.get('prompt', default = "Hello", type = str)
+    # Parse body
+    body = request.get_json()
 
-    messages = [{"role": "user", "content": prompt}]
-    return gpt.chat_completion(messages)
+    # Ensure that body is a dict
+    if not isinstance(body, dict):
+        return "Invalid body", 400
+    
+    # Ensure that if body.model is set, it's the same as the MODEL env var
+    if "model" in body and body["model"] != model_name:
+        return "Provided model is different from the one available on this server", 400
+    # Get messages
+    messages = body["messages"]
 
+    return gpt.chat_completion(messages, verbose = False, streaming = False)
+
+@app.route('/', methods=['GET'])
+def home():
+    return 'Send POST request to /chat/completion with body {"messages":[{"role": "user", "content": "Your prompt here"}]}'
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
